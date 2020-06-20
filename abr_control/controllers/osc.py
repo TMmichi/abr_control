@@ -149,7 +149,7 @@ class OSC(Controller):
 
         return Mx, M_inv
 
-    def _calc_orientation_forces(self, target_abg, q):
+    def _calc_orientation_forces(self, name, target_abg, q):
         """ Calculate the desired Euler angle forces to apply to the arm to
         move the end-effector to the target orientation
 
@@ -170,7 +170,7 @@ class OSC(Controller):
                 )
             )
             # get the quaternion for the end effector
-            q_e = self.robot_config.quaternion(self.end_effector, q=q)
+            q_e = self.robot_config.quaternion(name, q=q)
             q_r = transformations.quaternion_multiply(
                 q_d, transformations.quaternion_conjugate(q_e)
             )
@@ -179,7 +179,7 @@ class OSC(Controller):
         elif self.orientation_algorithm == 1:
             # From (Caccavale et al, 1997) Section IV Quaternion feedback
             # get rotation matrix for the end effector orientation
-            R_e = self.robot_config.R(self.end_effector, q)
+            R_e = self.robot_config.R(name, q)
             # get rotation matrix for the target orientation
             R_d = transformations.euler_matrix(
                 target_abg[0], target_abg[1], target_abg[2], axes="rxyz"
@@ -267,7 +267,7 @@ class OSC(Controller):
 
             # if orientation is being controlled
             if np.sum(self.ctrlr_dof[3:]) > 0:
-                u_task[3:] = self._calc_orientation_forces(target[6*i+3:6*i+6], q[6*i:6*i+6])
+                u_task[3:] = self._calc_orientation_forces(ref_frame[i], target[6*i+3:6*i+6], q[6*i:6*i+6])
                 if debug:
                     print("u_task2: ",u_task)
 
