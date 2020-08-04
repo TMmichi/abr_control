@@ -347,4 +347,4 @@ class OSC(Controller):
         if debug:
             print("Total u: ",u_list)
 
-        return u
+        return u_list
